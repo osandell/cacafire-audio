@@ -16,8 +16,16 @@ SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_S
 # Start the MP3 playback in the background, suppressing output
 ffplay -nodisp -loop 0 "$SCRIPT_DIR/fireplace.mp3" &>/dev/null &
 
-# Run cacafire in the foreground
-cacafire
+# Run cacafire in the background
+cacafire &
 
-# Cleanup when cacafire exits
-cleanup
+# Capture the PID of cacafire
+CACAFIRE_PID=$!
+
+# Monitor for 'q' key press to quit
+while true; do
+    read -rsn1 input
+    if [ "$input" = "q" ]; then
+        cleanup
+    fi
+done
